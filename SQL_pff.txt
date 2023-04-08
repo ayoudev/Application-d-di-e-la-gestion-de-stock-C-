@@ -1,0 +1,179 @@
+create database gestion_stock
+use gestion_stock
+
+
+create table entreprise 
+(
+codepostal int primary key not null,
+nom varchar(20) not null,
+adresse varchar(20) not null,
+ville varchar(60),
+tele int not null,
+speciality varchar(20),
+photo image,
+)
+
+create table comptes
+(
+codepostal int foreign key references entreprise (codepostal),
+email varchar(60),
+motdepass varchar(60),
+role varchar(50)
+)
+
+
+
+create table Client
+(
+IdClient int primary key not null,
+NomClient varchar(20),
+VilleClient varchar(100),
+TeleClient int,
+EmailClient varchar(100),
+AdresseClient varchar(100),
+dateClient date
+)
+
+--alter table Client alter column dateClient date default sysdatetime();
+
+alter table Client alter column TeleClient varchar(12) not null;
+alter table Client add dateClient date
+
+create table Fornisseur 
+(
+CodePostalFornisseur int primary key not null,
+NomFornisseur varchar(30),
+VilleFornisseur varchar(20),
+TeleFornisseur int,
+EmailFornisseur varchar(100),
+AdresseFornisseur varchar(30),
+)
+create table Produit 
+(
+CodeBar int primary key not null,
+NomProduit varchar(20),
+QuantityProduit int,
+PrixAchatProduit float,
+PrixVentProduit float,
+IdCategory int foreign key  references Category (IdCategory),
+PictureProduit image,
+codebarimg image
+)
+
+alter table Produit add codebarimg image
+alter table Produit drop column PictureProduit
+
+create table Category
+(
+IdCategory int primary key not null,
+NomCategory varchar(20),
+)
+
+create table Achat_detail
+(
+ida int primary key not null identity(1,1),
+idproduit int foreign key references Produit (CodeBar),
+nomproduit varchar(50),
+quantitea int,
+totala float,
+datea date
+)
+
+create table Commande 
+(
+IDcommande int primary key,
+DateCommande date,
+idClient int foreign key references Client(idClient),
+Total_HT nvarchar(250),
+TVA nvarchar(20),
+TOTAL_TTC nvarchar(250)
+)
+
+create table Details_Commande (
+IdDetail int Not Null identity(1,1)  primary key,
+IDcommande int foreign key references Commande(IDcommande),
+IDProduit int foreign key references Produit(CodeBar),
+NomProduit nvarchar (250) Not NULL,
+Quantite int,
+Prix float,
+Remise int,
+TOTal float,
+datecommand date)
+
+
+select count(CodeBar) from Produit where CodeBar=2132
+
+alter table Category Drop column QuantityCategory
+
+select count(*) from Produit inner join Category on Produit.IdCategory=Category.IdCategory where Category.IdCategory=2
+
+SELECT Category.NomCategory
+FROM Category
+INNER JOIN Produit ON  Category.IdCategory = Produit.IdCategory 
+
+select * from Category where NomCategory= 'Phones'
+
+select * from Produit
+
+update Produit set QuantityProduit = QuantityProduit-5 where NomProduit='iphone 4'
+
+select * from Commande inner join Client on Commande.idClient = Client.idClient where Commande.idClient = 2
+
+select * from Produit where CodeBar =1 select NomClient from Client where idClient =1
+
+select * from Produit inner join Category on Produit.IdCategory=Category.IdCategory where CodeBar=12
+
+select * from Produit where NomProduit='Dell' 
+
+select * from Client where NomClient='Salma'
+
+Delete from Produit where CodeBar=1
+
+alter table Fornisseur add constraint fk_idcat foreign key (category)  references Category (IdCategory)
+ 
+alter table ProduitF add photoPF image
+
+alter table ProduitF add prixVF float
+
+alter table ProduitF add prixAF float
+
+select * from ProduitF where CodePostalFornisseur=1
+
+ select * from ProduitF where idPF=12344
+
+ select * from ProduitF inner join Fornisseur on ProduitF.CodePostalFornisseur=Fornisseur.CodePostalFornisseur where Fornisseur.CodePostalFornisseur=1
+
+ select * from Fornisseur inner join Category on Fornisseur.category=Category.IdCategory where Fornisseur.CodePostalFornisseur=3
+
+select * from ProduitF where CodePostalFornisseur=1
+
+select * from Fornisseur where CodePostalFornisseur=1
+
+ 
+select * from Fornisseur inner join Category on category.IdCategory=Fornisseur.category 
+
+select SUM(totalv) from ventes 
+
+select MAX(totalv) from ventes 
+
+select * from ventes order by totalv desc
+
+
+select * from ventes order by totalv desc
+
+
+select SUM(totalv) from Vent_detail
+
+select SUM(totala) from Achat_detail
+
+select idproduit,nomproduit,SUM(quantitev),SUM(totalv) from Vent_detail where datev between '05/20/2022' and '05/22/2022'
+group by nomproduit,idproduit  
+
+select idproduit,nomproduit,SUM(quantitev),SUM(totalv) from Vent_detail where idproduit= 1 and datev between '05/18/2022' and '05/20/2022'
+group by nomproduit,idproduit  
+
+select IDProduit,NomProduit,SUM(Quantite),SUM(TOTal) from Details_Commande 
+group by IDProduit,NomProduit 
+
+ select idproduit,nomproduit,SUM(quantitea),SUM(totala) from Achat_detail where datea between '05/18/2022' and '05/20/2022'
+group by nomproduit,idproduit
